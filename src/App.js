@@ -8,6 +8,8 @@ function App() {
       <Routes>
         {/* Route per il Layout applicato a tutti e due gli elementi  */}
         <Route element={<Layout />}>
+          {/* Inseriamo l'Index Route per la pagina / */}
+          <Route index element={<Home />} />
           <Route path='/home' element={<Home />} />
           <Route path='/users' element={<Users />} />
         </Route>
