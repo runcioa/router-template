@@ -3,9 +3,9 @@ import { Route, Routes, NavLink, } from 'react-router-dom'
 
 const AuthContext = createContext(null)
 
-function App() {
+const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-
+  
   const handleLogin = async () => {
     const token = await fakeAuth();
     setToken(token);
@@ -16,21 +16,39 @@ function App() {
     setToken(null);
   }
 
+  const value = {
+    token, 
+    onLogin: handleLogin,
+    onLogout: handleLogout,
+  };
+  
+  return (
+    <AuthContext.Provider value = {value}>
+      {children}
+    </AuthContext.Provider>
+  ) 
+  
+}
+
+function App() {
+
   return (
     <>
-      <AuthContext.Provider value={token}>
+      <AuthProvider>
         <h1>React Router</h1>
 
-        <Navigation token={token} onLogout={handleLogout} />
+        <Navigation />
 
         <Routes>
-          <Route index element={<Home onLogin={handleLogin} />} />
-          <Route path='/home' element={<Home onLogin={handleLogin} />} />
+          <Route index element={<Home  />} />
+          <Route path='/home' element={<Home  />} />
           <Route path='/dashboard' element={<Dashboard />} />
+
+
           <Route path='*' element={<NoMatch />} />
 
         </Routes>
-      </AuthContext.Provider>
+      </AuthProvider>
     </>
   );
 };
@@ -42,7 +60,8 @@ const NoMatch = () => {
 }
 
 
-const Navigation = ({ token, onLogout }) => {
+const Navigation = () => {
+  const {token, onLogout} = useContext(AuthContext);
   return (
     <nav>
       <NavLink to="/home"  >Home</NavLink>
@@ -55,7 +74,8 @@ const Navigation = ({ token, onLogout }) => {
 }
 
 
-const Home = ({ onLogin }) => {
+const Home = () => {
+  const {onLogin} = useContext(AuthContext);
   return (
     <>
       <h2>Home (Public)</h2>
@@ -68,7 +88,7 @@ const Home = ({ onLogin }) => {
 }
 
 const Dashboard = () => {
-  const token = useContext(AuthContext);
+  const {token, onLogout} = useContext(AuthContext);
   return (
     <>
       <h2>Dashboard (Protected)</h2>
