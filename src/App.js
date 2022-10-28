@@ -9,8 +9,11 @@ function App() {
 
     <Navigation />
     <Routes>
-      <Route path='/home' element={<Layout><Home /></Layout>} />
-      <Route path='/users' element={<Layout><Users /></Layout>} />
+      {/* Route per il Layout applicato a tutti e due gli elementi  */}
+      <Route element={<Layout />}>
+      <Route path='/home' element={<Home />} />
+      <Route path='/users' element={<Users />} />
+      </Route>
     </Routes>
     </>
   );
