@@ -12,11 +12,18 @@ function App() {
           <Route index element={<Home />} />
           <Route path='/home' element={<Home />} />
           <Route path='/users' element={<Users />} />
+          <Route path='*' element={<NoMatch />} />
         </Route>
       </Routes>
     </>
   );
 };
+
+const NoMatch = () => {
+  return (
+    <p>There is nothing here: 404!</p>
+  )
+}
 
 
 const Home = () => {
