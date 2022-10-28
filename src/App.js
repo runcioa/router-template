@@ -1,6 +1,7 @@
-import { useState }  from 'react';
+import { useState, createContext, useContext } from 'react';
 import { Route, Routes, NavLink, } from 'react-router-dom'
 
+const AuthContext = createContext(null)
 
 function App() {
   const [token, setToken] = useState(null);
@@ -11,23 +12,25 @@ function App() {
     console.log('set token', token);
   }
 
-  const handleLogout = ()=>{
+  const handleLogout = () => {
     setToken(null);
   }
 
   return (
     <>
-      <h1>React Router</h1>
+      <AuthContext.Provider value={token}>
+        <h1>React Router</h1>
 
-      <Navigation token={token} onLogout={handleLogout}/>
+        <Navigation token={token} onLogout={handleLogout} />
 
-      <Routes>
-        <Route index element={<Home onLogin={handleLogin}/>} />
-        <Route path='/home' element={<Home onLogin={handleLogin}/>} />
-        <Route path='/dashboard' element={<Dashboard />} />
-        <Route path='*' element={<NoMatch />} />
+        <Routes>
+          <Route index element={<Home onLogin={handleLogin} />} />
+          <Route path='/home' element={<Home onLogin={handleLogin} />} />
+          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='*' element={<NoMatch />} />
 
-      </Routes>
+        </Routes>
+      </AuthContext.Provider>
     </>
   );
 };
@@ -39,7 +42,7 @@ const NoMatch = () => {
 }
 
 
-const Navigation = ({token, onLogout}) => {
+const Navigation = ({ token, onLogout }) => {
   return (
     <nav>
       <NavLink to="/home"  >Home</NavLink>
@@ -65,15 +68,18 @@ const Home = ({ onLogin }) => {
 }
 
 const Dashboard = () => {
+  const token = useContext(AuthContext);
   return (
     <>
       <h2>Dashboard (Protected)</h2>
+
+      <div>Authenticated as {token}</div>
 
     </>
   )
 }
 
-const fakeAuth = () => 
+const fakeAuth = () =>
   new Promise((resolve) => {
     setTimeout(() => resolve('2342342342134'), 250);
   })
