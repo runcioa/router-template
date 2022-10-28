@@ -1,8 +1,13 @@
 import React from 'react';
-import {Route, Routes, Outlet, NavLink } from 'react-router-dom'
+import { Route, Routes, Outlet, NavLink, Link } from 'react-router-dom'
 
 
 function App() {
+  const users = [{
+    id: '1', fullname: 'Robin',
+    id: '3', fullname: 'Sarah',
+  }];
+
   return (
     <>
       <Routes>
@@ -11,7 +16,8 @@ function App() {
           {/* Inseriamo l'Index Route per la pagina / */}
           <Route index element={<Home />} />
           <Route path='/home' element={<Home />} />
-          <Route path='/users' element={<Users />} />
+          {/* Passo gli utenti nel componente Users con una Route */}
+          <Route path='/users' element={<Users users={users}/>} />
           <Route path='*' element={<NoMatch />} />
         </Route>
       </Routes>
@@ -33,12 +39,18 @@ const Home = () => {
   )
 }
 
-const Users = () => {
+const Users = ({ users }) => {
   return (
-
-    <h2>Users</h2>
-
-
+    <>
+      <h2>Users</h2>
+      <ul>
+        {users.map((user)=>(
+          <li key={user.id}>
+            <Link to={`/users/${user.id}`}>{user.fullname}</Link>
+          </li>
+        ))}
+      </ul>
+    </>
   )
 }
 
