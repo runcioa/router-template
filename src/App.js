@@ -9,8 +9,8 @@ function App() {
 
     <Navigation />
     <Routes>
-      <Route path='/home' element={<Home />} />
-      <Route path='/users' element={<Users />} />
+      <Route path='/home' element={<Layout><Home /></Layout>} />
+      <Route path='/users' element={<Layout><Users /></Layout>} />
     </Routes>
     </>
   );
@@ -43,8 +43,9 @@ const Users = () =>{
   )
 }
 
+// Utilizzo il Layout per gli stili di entrambe le pagine
 const Layout = ({children}) =>{
-  return ( <main style={{paddind: '1rem 0'}}>{children}</main>
+  return ( <main style={{padding: '1rem 0', color: 'red'}}>{children}</main>
 
   )
 }
