@@ -1,25 +1,32 @@
-import React from 'react';
-import { Route, Routes, Outlet, NavLink, Link } from 'react-router-dom'
+import { useState }  from 'react';
+import { Route, Routes, NavLink, } from 'react-router-dom'
 
 
 function App() {
-  const users = [{
-    id: '1', fullname: 'Robin',
-    id: '3', fullname: 'Sarah',
-  }];
+  const [token, setToken] = useState(null);
+
+  const handleLogin = async () => {
+    const token = await fakeAuth();
+    setToken(token);
+    console.log('set token', token);
+  }
+
+  const handleLogout = ()=>{
+    setToken(null);
+  }
 
   return (
     <>
+      <h1>React Router</h1>
+
+      <Navigation token={token} onLogout={handleLogout}/>
+
       <Routes>
-        {/* Route per il Layout applicato a tutti e due gli elementi  */}
-        <Route element={<Layout />}>
-          {/* Inseriamo l'Index Route per la pagina / */}
-          <Route index element={<Home />} />
-          <Route path='/home' element={<Home />} />
-          {/* Passo gli utenti nel componente Users con una Route */}
-          <Route path='/users' element={<Users users={users}/>} />
-          <Route path='*' element={<NoMatch />} />
-        </Route>
+        <Route index element={<Home onLogin={handleLogin}/>} />
+        <Route path='/home' element={<Home onLogin={handleLogin}/>} />
+        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='*' element={<NoMatch />} />
+
       </Routes>
     </>
   );
@@ -32,50 +39,46 @@ const NoMatch = () => {
 }
 
 
-const Home = () => {
+const Navigation = ({token, onLogout}) => {
   return (
-    <h2>Home</h2>
+    <nav>
+      <NavLink to="/home"  >Home</NavLink>
+      <NavLink to="/dashboard" >Dashboard</NavLink>
+
+      {token && <button type='button' onClick={onLogout}>Sign Out</button>}
+    </nav>
 
   )
 }
 
-const Users = ({ users }) => {
+
+const Home = ({ onLogin }) => {
   return (
     <>
-      <h2>Users</h2>
-      <ul>
-        {users.map((user)=>(
-          <li key={user.id}>
-            <Link to={`/users/${user.id}`}>{user.fullname}</Link>
-          </li>
-        ))}
-      </ul>
+      <h2>Home (Public)</h2>
+
+      <button type='button' onClick={onLogin}>
+        Sign In
+      </button>
     </>
   )
 }
 
-// Utilizzo il Layout per gli stili di entrambe le pagine
-// Con Outlet tolgo i childre e li prende da soli
-const Layout = () => {
-  const style = ({ isActive }) => ({
-    fontWeight: isActive ? 'bold' : 'normal',
-  });
-
+const Dashboard = () => {
   return (
     <>
-      <h1>React Router</h1>
-
-      <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
-        <NavLink to="/home" style={style} >Home</NavLink>
-        <NavLink to="/users" style={style} >Users</NavLink>
-      </nav>
-
-      <main style={{ padding: '1rem 0', color: 'red' }}>
-        <Outlet />
-      </main>
+      <h2>Dashboard (Protected)</h2>
 
     </>
   )
 }
+
+const fakeAuth = () => 
+  new Promise((resolve) => {
+    setTimeout(() => resolve('2342342342134'), 250);
+  })
+
+
+
 
 export default App;
