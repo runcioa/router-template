@@ -1,9 +1,23 @@
 import { useState, createContext, useContext } from 'react';
-import { Route, Routes, NavLink, } from 'react-router-dom'
-
+import { Route, Routes, NavLink, useNavigate, Navigate, } from 'react-router-dom'
 const AuthContext = createContext(null)
 
+const ProtectedRoute = ({children}) => {
+  const {token} = useContext(AuthContext);
+
+  if (!token){
+    return <Navigate to='/home' replace />    
+  }
+
+  return children
+};
+
+
 const AuthProvider = ({ children }) => {
+
+  // Navigate per redirect
+  const navigate = useNavigate();
+
   const [token, setToken] = useState(null);
   
   const handleLogin = async () => {
@@ -42,7 +56,8 @@ function App() {
         <Routes>
           <Route index element={<Home  />} />
           <Route path='/home' element={<Home  />} />
-          <Route path='/dashboard' element={<Dashboard />} />
+         
+          <Route path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
 
           <Route path='*' element={<NoMatch />} />
@@ -88,7 +103,7 @@ const Home = () => {
 }
 
 const Dashboard = () => {
-  const {token, onLogout} = useContext(AuthContext);
+  const {token} = useContext(AuthContext);
   return (
     <>
       <h2>Dashboard (Protected)</h2>
